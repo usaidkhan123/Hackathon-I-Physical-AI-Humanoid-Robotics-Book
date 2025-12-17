@@ -1,28 +1,69 @@
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: red !important; /* Forcing a highly visible color */
+  color: white;
+  border: none;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s ease-in-out;
+  z-index: 9999 !important; /* Forcing it to be on top */
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  background-color: darkred !important;
+}
+
 .chatbotContainer {
-  border: 1px solid #ccc;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  border: 1px solid var(--ifm-hr-border-color);
   border-radius: 8px;
   width: 400px;
   display: flex;
   flex-direction: column;
-  font-family: sans-serif;
-  margin: 20px;
-  background-color: #f9f9f9;
+  font-family: var(--ifm-font-family-base);
+  background-color: var(--ifm-background-surface-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 10001 !important; /* Also increase the container z-index */
 }
 
 .chatbotHeader {
-  background-color: #f1f1f1;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-  text-align: center;
+  background-color: var(--ifm-background-color);
+  padding: 1rem;
+  border-bottom: 1px solid var(--ifm-hr-border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .chatbotHeader h2 {
   margin: 0;
-  font-size: 1.2em;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--ifm-font-color-base);
 }
 
 .messageContainer {
-  padding: 10px;
+  padding: 1rem;
   flex-grow: 1;
   overflow-y: auto;
   min-height: 300px;
@@ -32,60 +73,73 @@
 }
 
 .message {
-  padding: 8px 12px;
+  padding: 0.75rem 1rem;
   border-radius: 18px;
-  max-width: 70%;
+  max-width: 80%;
   word-wrap: break-word;
+  line-height: 1.4;
 }
 
 .user {
-  background-color: #d1e7dd;
+  background-color: var(--ifm-color-primary);
+  color: white;
   align-self: flex-end;
-  color: #0f5132;
+  border-bottom-right-radius: 4px;
 }
 
 .bot {
-  background-color: #f8d7da;
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
   align-self: flex-start;
-  color: #58151c;
+  border: 1px solid var(--ifm-hr-border-color);
+  border-bottom-left-radius: 4px;
 }
 
 .error {
-    background-color: #f8d7da;
-    color: #842029;
-    border: 1px solid #f5c2c7;
+    background-color: #ff4d4f;
+    color: white;
     align-self: center;
+    text-align: center;
 }
 
 .loading {
   align-self: center;
-  color: #666;
+  color: var(--ifm-font-color-secondary);
 }
 
 .inputContainer {
   display: flex;
-  padding: 10px;
-  border-top: 1px solid #ccc;
+  padding: 1rem;
+  border-top: 1px solid var(--ifm-hr-border-color);
+  background-color: var(--ifm-background-color);
 }
 
 .inputContainer input {
   flex-grow: 1;
-  border: 1px solid #ccc;
+  border: 1px solid var(--ifm-hr-border-color);
   border-radius: 4px;
-  padding: 8px;
-  font-size: 1em;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+}
+
+.inputContainer input:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
 }
 
 .inputContainer button {
   border: none;
-  background-color: #007bff;
+  background-color: var(--ifm-color-primary);
   color: white;
-  padding: 8px 12px;
+  padding: 0.75rem 1.5rem;
   border-radius: 4px;
   margin-left: 10px;
   cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .inputContainer button:hover {
-  background-color: #0056b3;
+  background-color: var(--ifm-color-primary-dark);
 }

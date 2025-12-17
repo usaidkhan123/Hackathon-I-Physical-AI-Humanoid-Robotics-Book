@@ -1,24 +1,10 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap');
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
-}
+  --ifm-font-family-base: 'Inter', sans-serif;
+  --ifm-font-family-monospace: 'Roboto Mono', monospace;
+  --ifm-font-size-base: 100%;
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
   --ifm-color-primary: #25c2a0;
   --ifm-color-primary-dark: #21af90;
   --ifm-color-primary-darker: #1fa588;
@@ -26,5 +12,69 @@
   --ifm-color-primary-light: #29d5b0;
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+
+  --ifm-background-color: #F4F7F9;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-global-border-width: 0px;
+  --ifm-hr-border-color: #e0e0e0;
+
+  --ifm-font-color-base: #1c1e21;
+  --ifm-link-color: var(--ifm-color-primary);
+}
+
+html[data-theme='dark'] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+
+  --ifm-background-color: #0D1117;
+  --ifm-background-surface-color: #161B22;
+  --ifm-global-border-width: 0px;
+  --ifm-hr-border-color: #333;
+  --ifm-font-color-base: #f5f6f7;
+  --ifm-link-color: var(--ifm-color-primary-light);
+}
+
+.hero {
+    background: #e0f7fa; /* Light theme homepage background */
+    border-bottom: 1px solid var(--ifm-hr-border-color);
+}
+
+html[data-theme='dark'] .hero {
+    background: var(--ifm-background-color); /* Dark theme homepage background matches global */
+    color: var(--ifm-font-color-base); /* Ensure text is white in dark mode */
+}
+
+html[data-theme='dark'] .hero__title,
+html[data-theme='dark'] .hero__subtitle {
+    color: var(--ifm-font-color-base); /* Explicitly set text color for title and subtitle */
+}
+
+.hero__title {
+    font-size: 3.5rem;
+    font-weight: 700;
+}
+
+.hero__subtitle {
+    font-size: 1.25rem;
+    font-weight: 400;
+    max-width: 600px;
+    margin: 1.5rem auto;
+}
+
+.button--secondary {
+    background-color: var(--ifm-color-primary);
+    color: white;
+    border: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.button--secondary:hover {
+    background-color: var(--ifm-color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }

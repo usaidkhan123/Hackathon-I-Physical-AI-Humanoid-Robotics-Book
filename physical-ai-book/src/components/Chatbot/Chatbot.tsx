@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import styles from './styles.module.css';
+import { FaCommentDots, FaTimes } from 'react-icons/fa';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -22,13 +24,12 @@ const Chatbot = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ content: input }),
+        body: JSON.stringify({ role: 'user', content: input }), // Corrected payload
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-
 
       setMessages([...newMessages, { text: data.content, sender: 'bot' }]);
     } catch (error) {
@@ -38,10 +39,21 @@ const Chatbot = () => {
     }
   };
 
+  if (!isOpen) {
+    return (
+      <button className={styles.fab} onClick={() => setIsOpen(true)}>
+        <FaCommentDots />
+      </button>
+    );
+  }
+
   return (
     <div className={styles.chatbotContainer}>
       <div className={styles.chatbotHeader}>
         <h2>Physical AI Book Chatbot</h2>
+        <button onClick={() => setIsOpen(false)} className={styles.closeButton}>
+            <FaTimes />
+        </button>
       </div>
       <div className={styles.messageContainer}>
         {messages.map((msg, index) => (

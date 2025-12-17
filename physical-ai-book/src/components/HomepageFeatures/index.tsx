@@ -1,68 +1,76 @@
-import type {ReactNode} from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
-type FeatureItem = {
+type ModuleItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
-  description: ReactNode;
+  link: string;
+  description: React.ReactNode;
 };
 
-const FeatureList: FeatureItem[] = [
+const ModuleList: ModuleItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Module 1: The Foundations of ROS 2',
+    link: '/docs/module-01-ros2/module-01-ros2',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Start your journey by mastering the core concepts of the Robot Operating System 2 (ROS 2), the backbone of modern robotics.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Module 2: Building Virtual Worlds',
+    link: '/docs/module-02-simulation/module-02-simulation',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Learn to simulate robots in realistic environments using Gazebo and Unity, essential skills for testing and development.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Module 3: NVIDIA Isaac and AI',
+    link: '/docs/module-03-nvidia-isaac/module-03-nvidia-isaac',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Dive into the powerful NVIDIA Isaac SDK for accelerated AI robotics, including perception, navigation, and manipulation.
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Module({title, description, link}: ModuleItem) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
+      <div className={clsx('card', styles.moduleCard)}>
+        <div className="card__header">
+          <Heading as="h3">{title}</Heading>
+        </div>
+        <div className="card__body">
+          <p>{description}</p>
+        </div>
+        <div className="card__footer">
+          <a href={link} className="button button--primary button--block">
+            Explore Module
+          </a>
+        </div>
       </div>
     </div>
   );
 }
 
-export default function HomepageFeatures(): ReactNode {
+export default function HomepageFeatures(): React.ReactElement {
   return (
     <section className={styles.features}>
       <div className="container">
         <div className="row">
-          {FeatureList.map((props, idx) => (
-            <Feature key={idx} {...props} />
+          <div className="col col--12 text--center">
+            <Heading as="h2" className={styles.sectionTitle}>Explore the Curriculum</Heading>
+          </div>
+        </div>
+        <div className="row">
+          {ModuleList.map((props, idx) => (
+            <Module key={idx} {...props} />
           ))}
         </div>
       </div>
