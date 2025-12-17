@@ -22,7 +22,7 @@ const Chatbot = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ content: input }),
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -30,7 +30,7 @@ const Chatbot = () => {
       const data = await response.json();
 
 
-      setMessages([...newMessages, { text: data.response, sender: 'bot' }]);
+      setMessages([...newMessages, { text: data.content, sender: 'bot' }]);
     } catch (error) {
       setError(error.message);
     } finally {

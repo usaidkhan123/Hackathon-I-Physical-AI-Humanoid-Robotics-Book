@@ -1,0 +1,33 @@
+# Node.js/TypeScript
+node_modules/
+dist/
+build/
+*.log
+.env*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+.docusaurus/
+uvicorn
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+*.egg-info/
+
+# Universal
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
+
+# Gemini specific
+.gemini/
+history/
