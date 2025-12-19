@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './styles.module.css';
 import { FaCommentDots, FaTimes } from 'react-icons/fa';
 
-const Chatbot = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
+interface Message {
+  text: string;
+  sender: 'user' | 'bot';
+}
 
-  const handleSend = async () => {
+const Chatbot: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when new messages arrive
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
+
+  const handleSend = async (): Promise<void> => {
     if (!input.trim()) return;
 
-    const newMessages = [...messages, { text: input, sender: 'user' }];
+    const userMessage = input.trim();
+    const newMessages: Message[] = [...messages, { text: userMessage, sender: 'user' }];
     setMessages(newMessages);
     setInput('');
     setLoading(true);
@@ -24,16 +40,17 @@ const Chatbot = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ role: 'user', content: input }), // Corrected payload
+        body: JSON.stringify({ role: 'user', content: userMessage }),
       });
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const data = await response.json();
 
+      const data = await response.json();
       setMessages([...newMessages, { text: data.content, sender: 'bot' }]);
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -41,7 +58,7 @@ const Chatbot = () => {
 
   if (!isOpen) {
     return (
-      <button className={styles.fab} onClick={() => setIsOpen(true)}>
+      <button className={styles.fab} onClick={() => setIsOpen(true)} aria-label="Open chat">
         <FaCommentDots />
       </button>
     );
@@ -51,8 +68,8 @@ const Chatbot = () => {
     <div className={styles.chatbotContainer}>
       <div className={styles.chatbotHeader}>
         <h2>Physical AI Book Chatbot</h2>
-        <button onClick={() => setIsOpen(false)} className={styles.closeButton}>
-            <FaTimes />
+        <button onClick={() => setIsOpen(false)} className={styles.closeButton} aria-label="Close chat">
+          <FaTimes />
         </button>
       </div>
       <div className={styles.messageContainer}>
@@ -63,6 +80,7 @@ const Chatbot = () => {
         ))}
         {loading && <div className={styles.loading}>Loading...</div>}
         {error && <div className={`${styles.message} ${styles.error}`}>{error}</div>}
+        <div ref={messagesEndRef} />
       </div>
       <div className={styles.inputContainer}>
         <input
@@ -72,7 +90,9 @@ const Chatbot = () => {
           onKeyPress={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Ask a question..."
         />
-        <button onClick={handleSend}>Send</button>
+        <button onClick={handleSend} disabled={loading || !input.trim()}>
+          Send
+        </button>
       </div>
     </div>
   );

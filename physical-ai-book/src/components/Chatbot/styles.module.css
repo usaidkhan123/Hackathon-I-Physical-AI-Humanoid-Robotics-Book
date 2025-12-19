@@ -5,7 +5,7 @@
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  background-color: red !important; /* Forcing a highly visible color */
+  background-color: red !important;
   color: white;
   border: none;
   font-size: 2rem;
@@ -15,7 +15,7 @@
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   transition: all 0.3s ease-in-out;
-  z-index: 9999 !important; /* Forcing it to be on top */
+  z-index: 9999 !important;
 }
 
 .fab:hover {
@@ -30,12 +30,15 @@
   border: 1px solid var(--ifm-hr-border-color);
   border-radius: 8px;
   width: 400px;
+  max-width: calc(100vw - 2rem);
+  height: 500px;
+  max-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
   font-family: var(--ifm-font-family-base);
   background-color: var(--ifm-background-surface-color);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  z-index: 10001 !important; /* Also increase the container z-index */
+  z-index: 10001 !important;
 }
 
 .chatbotHeader {
@@ -45,6 +48,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .chatbotHeader h2 {
@@ -55,18 +59,18 @@
 }
 
 .closeButton {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--ifm-font-color-base);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--ifm-font-color-base);
 }
 
 .messageContainer {
   padding: 1rem;
-  flex-grow: 1;
+  flex: 1;
   overflow-y: auto;
-  min-height: 300px;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -96,10 +100,10 @@
 }
 
 .error {
-    background-color: #ff4d4f;
-    color: white;
-    align-self: center;
-    text-align: center;
+  background-color: #ff4d4f;
+  color: white;
+  align-self: center;
+  text-align: center;
 }
 
 .loading {
@@ -112,6 +116,7 @@
   padding: 1rem;
   border-top: 1px solid var(--ifm-hr-border-color);
   background-color: var(--ifm-background-color);
+  flex-shrink: 0;
 }
 
 .inputContainer input {
@@ -142,4 +147,30 @@
 
 .inputContainer button:hover {
   background-color: var(--ifm-color-primary-dark);
+}
+
+.inputContainer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .chatbotContainer {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - 2rem);
+    border-radius: 8px 8px 0 0;
+  }
+
+  .fab {
+    bottom: 1rem;
+    right: 1rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.5rem;
+  }
 }
