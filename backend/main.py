@@ -3,9 +3,11 @@ from fastapi import FastAPI, Depends, HTTPException
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import OperationalError
 import database, models, rag, config
 from database import SessionLocal, engine
 import uuid
+import time
 
 database.Base.metadata.create_all(bind=engine)
 
@@ -67,39 +69,71 @@ def search_content(question: models.Question):
 def post_message(session_id: str, user_message: models.Message, db: Session = Depends(get_db)):
     """
     Handles a user message, runs the RAG pipeline, and stores the conversation.
+    Includes retry logic for transient database connection failures.
     """
-    try:
-        # 1. Save user message
-        db_user_message = database.Message(
-            session_id=session_id,
-            role="user",
-            content=user_message.content,
-        )
-        db.add(db_user_message)
-        db.commit()
-        db.refresh(db_user_message)
+    max_retries = 3
+    last_error = None
 
-        # 2. Run RAG pipeline
+    for attempt in range(max_retries):
         try:
-            context = rag.rag_pipeline.search(user_message.content)
-            answer = rag.rag_pipeline.generate_answer(user_message.content, context)
-        except Exception as rag_error:
-            # If RAG fails, return a helpful message
-            answer = f"I'm sorry, I encountered an issue while processing your question. Please make sure the book content has been embedded first by calling the /embed endpoint. Error: {str(rag_error)}"
+            # Rollback any failed transaction from previous attempt
+            if attempt > 0:
+                db.rollback()
+                time.sleep(0.5 * (attempt + 1))  # Backoff
 
-        # 3. Save assistant message
-        db_assistant_message = database.Message(
-            session_id=session_id,
-            role="assistant",
-            content=answer,
-        )
-        db.add(db_assistant_message)
-        db.commit()
-        db.refresh(db_assistant_message)
+            # 0. Ensure session exists (create if not)
+            session = db.query(database.Session).filter(database.Session.id == session_id).first()
+            if not session:
+                new_session = database.Session(id=session_id)
+                db.add(new_session)
+                db.commit()
 
-        return {"role": "assistant", "content": answer}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to process message: {str(e)}")
+            # 1. Save user message
+            db_user_message = database.Message(
+                session_id=session_id,
+                role="user",
+                content=user_message.content,
+            )
+            db.add(db_user_message)
+            db.commit()
+            db.refresh(db_user_message)
+
+            # 2. Run RAG pipeline
+            try:
+                context = rag.rag_pipeline.search(user_message.content)
+                answer = rag.rag_pipeline.generate_answer(user_message.content, context)
+            except Exception as rag_error:
+                # If RAG fails, return a helpful message
+                answer = f"I'm sorry, I encountered an issue while processing your question. Please make sure the book content has been embedded first by calling the /embed endpoint. Error: {str(rag_error)}"
+
+            # 3. Save assistant message
+            db_assistant_message = database.Message(
+                session_id=session_id,
+                role="assistant",
+                content=answer,
+            )
+            db.add(db_assistant_message)
+            db.commit()
+            db.refresh(db_assistant_message)
+
+            return {"role": "assistant", "content": answer}
+
+        except OperationalError as e:
+            last_error = e
+            print(f"Database connection error (attempt {attempt + 1}/{max_retries}): {str(e)}")
+            if attempt < max_retries - 1:
+                continue
+            # Last attempt failed
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"POST MESSAGE ERROR after {max_retries} retries: {error_trace}")
+            raise HTTPException(status_code=500, detail=f"Database connection failed after {max_retries} attempts. Please try again.")
+
+        except Exception as e:
+            import traceback
+            error_trace = traceback.format_exc()
+            print(f"POST MESSAGE ERROR: {error_trace}")
+            raise HTTPException(status_code=500, detail=f"Failed to process message: {str(e)}\n\nTraceback: {error_trace}")
 
 @app.get("/sessions/{session_id}/messages", response_model=List[models.MessageDB])
 def get_messages(session_id: str, db: Session = Depends(get_db)):
